@@ -25,16 +25,17 @@ jobs:
         with:
           node-version: '20.x'
           registry-url: 'https://npm.pkg.github.com'
+
+      - run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" > ~/.npmrc
       
       # Install Yarn
       - run: npm install -g yarn
 
       # Install dependencies and build
-      - run: npm install
-      - run: npm run build
+      - run: yarn install
+      - run: yarn build
       
       # Pack and publish the package to GitHub Packages
-      - run: npm pkg fix
       - run: yarn publish --new-version ${GITHUB_REF##*/v} --access public
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
