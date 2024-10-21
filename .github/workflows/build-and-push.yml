@@ -36,6 +36,6 @@ jobs:
       - run: yarn build
       
       # Pack and publish the package to GitHub Packages
-      - run: yarn publish --new-version ${GITHUB_REF##*/v} --access public
+      - run: yarn lerna publish from-package --yes
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
