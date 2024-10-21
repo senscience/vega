@@ -1,4 +1,12 @@
 {
   "version": "independent",
-  "npmClient": "yarn"
+  "npmClient": "yarn",
+  "packages": [
+    "packages/*"
+  ],
+  "command": {
+    "publish": {
+      "registry": "https://npm.pkg.github.com"
+    }
+  }
 }
