@@ -1,6 +1,6 @@
 {
-  "version": "independent",
-  "npmClient": "yarn",
+  "version": "1.0.0",
+  "includeMergedTags": true,
   "packages": [
     "packages/*"
   ],
