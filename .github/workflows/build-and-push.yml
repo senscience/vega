@@ -30,8 +30,8 @@ jobs:
       - run: npm install -g yarn
 
       # Install dependencies and build
-      - run: yarn install
-      - run: yarn build
+      - run: npm install
+      - run: npm build
       
       # Pack and publish the package to GitHub Packages
       - run: npm pkg fix
