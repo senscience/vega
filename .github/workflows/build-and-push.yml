@@ -34,6 +34,7 @@ jobs:
       - run: yarn build
       
       # Pack and publish the package to GitHub Packages
+      - run: npm pkg fix
       - run: npm publish --registry https://npm.pkg.github.com
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
