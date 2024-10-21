@@ -1,6 +1,6 @@
 {
   "name": "sense-vega",
-  "private": true,
+  "private": false,
   "license": "BSD-3-Clause",
   "author": "UW Interactive Data Lab (http://idl.cs.washington.edu)",
   "repository": {
