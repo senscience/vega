@@ -31,10 +31,10 @@ jobs:
 
       # Install dependencies and build
       - run: npm install
-      - run: npm build
+      - run: npm run build
       
       # Pack and publish the package to GitHub Packages
       - run: npm pkg fix
-      - run: npm publish --registry https://npm.pkg.github.com
+      - run: yarn publish --new-version ${GITHUB_REF##*/v} --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
