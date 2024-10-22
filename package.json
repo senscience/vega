@@ -8,7 +8,6 @@
     "url": "https://github.com/vega/vega.git"
   },
   "scripts": {
-    "build": "lerna run build && yarn docsbuild",
     "versionup": "lerna version --conventional-commits --no-git-tag-version",
     "versionup:patch": "lerna version patch --conventional-commits --no-git-tag-version",
     "versionup:minor": "lerna version minor --conventional-commits --no-git-tag-version",
