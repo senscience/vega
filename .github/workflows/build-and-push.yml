@@ -54,7 +54,7 @@ jobs:
 
       # 3. Budowanie paczek
       - name: Build All Packages
-        run: yarn build
+        run: yarn workspace vega-scenegraph run build
 
       # 4. Automatyczne zatwierdzenie changelogów (jeśli są generowane)
       - name: Commit Changelog Updates
