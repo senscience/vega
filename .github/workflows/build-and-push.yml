@@ -1,4 +1,4 @@
-name: Build and Publish Packages to GitHub Packages
+name: Build and Publish Single Package to GitHub Packages
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
       - name: Install Dependencies
         run: yarn install
 
-      # 2. Dodanie namespace @vega i konfiguracja do publikacji
+      # 2. Skonfiguruj .npmrc do publikacji w GitHub Packages
       - name: Configure .npmrc for GitHub Packages
         run: |
           echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > .npmrc
@@ -44,39 +44,17 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Add @vega namespace to all packages
+      # 3. Budowanie tylko paczki vega-scenegraph
+      - name: Build vega-scenegraph Package
         run: |
-          for pkg in packages/*/package.json; do
-            jq '.name = "@vega/" + .name' $pkg > tmp.$$.json && mv tmp.$$.json $pkg
-          done
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # 3. Budowanie paczek
-      - name: Build All Packages
-        run: |
-          yarn workspaces info  
-          yarn workspace @vega/vega-scenegraph run build
-          ls -la
           cd packages/vega-scenegraph
-          ls -la
+          yarn install
+          yarn build
 
-      ## 4. Automatyczne zatwierdzenie changelogów (jeśli są generowane)
-      #- name: Commit Changelog Updates
-        #run: |
-          #git config --global user.name 'github-actions[bot]'
-          #git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          #git checkout build-and-push
-          #git add .
-          #git commit -m "chore(release): update changelogs [skip ci]" || echo "No changes to commit"
-          #git push
-        #env:
-          #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # 5. Publikowanie paczek do GitHub Packages
-      - name: Publish Packages to GitHub Packages
+      # 4. Publikacja paczki vega-scenegraph do GitHub Packages
+      - name: Publish vega-scenegraph Package to GitHub Packages
         run: |
-          lerna version --conventional-commits --no-git-tag-version --yes
-          lerna publish from-package --no-private --scope=vega-scenegraph --yes
+          cd packages/vega-scenegraph
+          yarn publish --new-version 1.0.1 --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
