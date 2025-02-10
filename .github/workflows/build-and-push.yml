@@ -52,7 +52,9 @@ jobs:
           run: yarn install
           
         - name: Install Canvas and XML dependencies
-          run: sudo apt-get install -y libxml2-utils
+          run: |
+            sudo apt-get install -y libxml2-utils
+            ls -la
           
         - name: Publish
           run: |
