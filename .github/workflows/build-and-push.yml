@@ -1,4 +1,5 @@
-name: Build and Publish Package to GitHub Packages
+name: Build and Publish Packages to GitHub Packages
+
 on:
   push:
     branches:
@@ -10,56 +11,66 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-and-publish:
     runs-on: ubuntu-latest
     permissions:
       contents: read
       packages: write
       id-token: write
+
     steps:
-        - name: Checkout
-          uses: actions/checkout@v2
-        - name: Setup Node 20.x
-          uses: actions/setup-node@v2
-          with:
-            node-version: 20.x
-            registry-url: 'https://npm.pkg.github.com'
+      - name: Checkout Repository
+        uses: actions/checkout@v2
 
-        - name: Log in to GitHub Container Registry
-          uses: docker/login-action@v2
-          with:
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password: ${{ secrets.GITHUB_TOKEN }}     
-          
-        - name: Git Identity
-          run: |
-            git config --global user.name 'github-actions[bot]'
-            git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-            git remote set-url origin https://x-access-token:${GITHUB_TOKEN}@github.com/$GITHUB_REPOSITORY
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.x
+          registry-url: 'https://npm.pkg.github.com'
 
-        - name: Configure .npmrc for GitHub Packages
-          run: |
-            echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > .npmrc
-            echo "registry=https://npm.pkg.github.com/" >> .npmrc
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 1. Instalacja zależności z publicznego rejestru npm
+      - name: Configure .npmrc for Public npm Registry
+        run: |
+          echo "registry=https://registry.npmjs.org/" > .npmrc
 
+      - name: Install Dependencies
+        run: yarn install
 
-        - name: Install
-          run: yarn install
-          
-        - name: Install Canvas and XML dependencies
-          run: |
-            sudo apt-get install -y libxml2-utils
-            ls -la
-          
-        - name: Publish
-          run: |
-            lerna version --conventional-commits -no-verify --no-git-tag-version --yes
-            lerna publish --no-private --yes
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # 2. Dodanie namespace @vega i konfiguracja do publikacji
+      - name: Configure .npmrc for GitHub Packages
+        run: |
+          echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > .npmrc
+          echo "@vega:registry=https://npm.pkg.github.com/" >> .npmrc
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add @vega namespace to all packages
+        run: |
+          for pkg in packages/*/package.json; do
+            jq '.name = "@vega/" + .name' $pkg > tmp.$$.json && mv tmp.$$.json $pkg
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. Budowanie paczek
+      - name: Build All Packages
+        run: yarn build
+
+      # 4. Automatyczne zatwierdzenie changelogów (jeśli są generowane)
+      - name: Commit Changelog Updates
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add .
+          git commit -m "chore(release): update changelogs [skip ci]" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 5. Publikowanie paczek do GitHub Packages
+      - name: Publish Packages to GitHub Packages
+        run: |
+          lerna version --conventional-commits --no-git-tag-version --no-verify --yes
+          lerna publish from-package --no-private --yes
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
