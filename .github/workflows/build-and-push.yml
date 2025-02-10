@@ -40,15 +40,13 @@ jobs:
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-        - name: Configure .npmrc for GitHub Packages
+        - name: Setup .yarnrc.yml
           run: |
-            echo "registry=https://registry.yarnpkg.com/" > .npmrc
-
-            echo "@vega:registry=https://npm.pkg.github.com" > .npmrc
-            echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > .npmrc
-            echo "always-auth=true" >> .npmrc
+            yarn config set npmScopes.my-org.npmRegistryServer "https://npm.pkg.github.com"
+            yarn config set npmScopes.my-org.npmAlwaysAuth true
+            yarn config set npmScopes.my-org.npmAuthToken $NPM_AUTH_TOKEN
           env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            NPM_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
 
         - name: Install
