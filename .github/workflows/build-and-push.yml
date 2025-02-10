@@ -32,14 +32,12 @@ jobs:
             username: ${{ github.actor }}
             password: ${{ secrets.GITHUB_TOKEN }}     
 
-        - id: determine_tag
-          uses: ./.github/actions/determine-ta      
         - name: Build Docker image
           run: |
-            docker build -f Dockerfile -t ghcr.io/${{ github.repository }}/data-vitae-test:${{ steps.determine_tag.outputs.image_tag }}       
+            docker build -f Dockerfile -t ghcr.io/${{ github.repository }}/data-vitae-test
         - name: Push Docker image to GHCR
           run: |
-            docker push ghcr.io/${{ github.repository }}/data-vitae-test:${{ steps.determine_tag.outputs.image_tag }}
+            docker push ghcr.io/${{ github.repository }}/data-vitae-test
           
         - name: Git Identity
           run: |
