@@ -1,5 +1,5 @@
 {
-  "name": "@vega/vega-canvas",
+  "name": "vega-canvas",
   "version": "1.2.7",
   "description": "Canvas and Image utilities.",
   "keywords": [

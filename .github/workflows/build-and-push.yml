@@ -42,8 +42,11 @@ jobs:
 
         - name: Configure .npmrc for GitHub Packages
           run: |
+            echo "registry=https://registry.yarnpkg.com/" > .npmrc
+
+            echo "@vega:registry=https://npm.pkg.github.com" > .npmrc
             echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" > .npmrc
-            echo "registry=https://npm.pkg.github.com/" >> .npmrc
+            echo "always-auth=true" >> .npmrc
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

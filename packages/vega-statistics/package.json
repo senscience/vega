@@ -1,5 +1,5 @@
 {
-  "name": "@vega/vega-statistics",
+  "name": "vega-statistics",
   "version": "1.9.0",
   "description": "Statistical routines and probability distributions.",
   "keywords": [
