@@ -50,15 +50,12 @@ jobs:
 
 
         - name: Install
-          run: yarn install
+          run: yarn install --immutable
           
         - name: Install Canvas and XML dependencies
           run: sudo apt-get install -y libxml2-utils
           
         - name: Publish
           run: |
-            yarn versionup --yes
-            yarn release --yes
-          env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-            NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+            yarn publish --yes
+          
