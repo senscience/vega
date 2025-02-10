@@ -56,7 +56,7 @@ jobs:
       - name: Build All Packages
         run: |
           yarn workspaces list  
-          yarn workspace vega-scenegraph run build
+          yarn workspace @vega/vega-scenegraph run build
 
       # 4. Automatyczne zatwierdzenie changelogów (jeśli są generowane)
       - name: Commit Changelog Updates
