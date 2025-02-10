@@ -31,13 +31,6 @@ jobs:
             registry: ghcr.io
             username: ${{ github.actor }}
             password: ${{ secrets.GITHUB_TOKEN }}     
-
-        - name: Build Docker image
-          run: |
-            docker build -f Dockerfile -t ghcr.io/${{ github.repository }}/data-vitae-test:1.0.0 .
-        - name: Push Docker image to GHCR
-          run: |
-            docker push ghcr.io/${{ github.repository }}/data-vitae-test:1.0.0
           
         - name: Git Identity
           run: |
