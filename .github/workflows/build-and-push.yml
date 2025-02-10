@@ -56,7 +56,7 @@ jobs:
           
         - name: Publish
           run: |
-            lerna version --conventional-commits --no-git-tag-version --yes
+            lerna version --conventional-commits -no-verify --no-git-tag-version --yes
             lerna publish --no-private --yes
           env:
             GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
