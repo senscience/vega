@@ -1,5 +1,5 @@
 {
-  "name": "vega-util",
+  "name": "@vega/ega-util",
   "version": "1.17.2",
   "description": "JavaScript utilities for Vega.",
   "keywords": [
