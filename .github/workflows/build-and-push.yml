@@ -57,6 +57,7 @@ jobs:
         run: |
           yarn workspaces info  
           yarn workspace @vega/vega-scenegraph run build
+          ls -la
 
       ## 4. Automatyczne zatwierdzenie changelogów (jeśli są generowane)
       #- name: Commit Changelog Updates
@@ -74,6 +75,6 @@ jobs:
       - name: Publish Packages to GitHub Packages
         run: |
           lerna version --conventional-commits --no-git-tag-version --no-verify --yes
-          lerna publish from-package --no-private --yes
+          lerna publish from-package --no-private --scope=vega-scenegraph --yes
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
