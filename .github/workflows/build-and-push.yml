@@ -40,6 +40,7 @@ jobs:
       - name: Build vega-scenegraph Package
         run: |
           cd packages/vega-scenegraph
+          yarn add esm --dev
           yarn build
 
       - name: Publish vega-scenegraph Package using npm
