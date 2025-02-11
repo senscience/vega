@@ -60,7 +60,7 @@ jobs:
       - name: Publish vega-scenegraph Package using npm
         run: |
           cd packages/vega-scenegraph
-          npm version ${{ steps.set_image_tag.outputs.image_tag}} --no-git-tag-version
+          npm version ${{ steps.set_image_tag.outputs.image_tag}}
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
