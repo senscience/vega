@@ -1,3 +1,5 @@
+### **IMPORTANT**: In case of updating packages, please remember not to change vega-scenegraph package.json. Name should have @senscience namespace and prepublishOnly command should contains "yarn build" only
+
 # Vega: A Visualization Grammar <a href="https://vega.github.io/vega/"><img align="right" src="https://github.com/vega/logos/blob/master/assets/VG_Color@64.png?raw=true" height="38"></img></a>
 
 <a href="https://vega.github.io/vega/examples">

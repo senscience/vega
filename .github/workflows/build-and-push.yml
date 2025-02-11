@@ -1,0 +1,59 @@
+name: Build and Publish vega-scenegraph to GitHub Packages 
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+'
+  workflow_dispatch:
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js 20.x
+        uses: actions/setup-node@v2
+        with:
+          node-version: 20.x
+          registry-url: 'https://npm.pkg.github.com'
+      
+      - name: Determine Image Tag
+        id: set_image_tag
+        shell: bash
+        run: |
+          IMAGE_TAG="1.0.$(date +'%Y%m%d%H%M%S')"
+          echo $IMAGE_TAG
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
+
+      - name: Configure .npmrc for GitHub Packages
+        run: |
+          echo "@senscience:registry=https://npm.pkg.github.com/" > ~/.npmrc
+          echo "//npm.pkg.github.com/:_authToken=${NODE_AUTH_TOKEN}" >> ~/.npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Build vega-scenegraph Package
+        run: |
+          cd packages/vega-scenegraph
+          yarn add esm --dev
+          yarn build
+
+      - name: Publish vega-scenegraph Package using npm
+        run: |
+          cd packages/vega-scenegraph
+          npm version ${{ steps.set_image_tag.outputs.image_tag}}
+          npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
