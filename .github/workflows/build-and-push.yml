@@ -1,4 +1,4 @@
-name: Build and Publish Single Package to GitHub Packages using npm
+name: Build and Publish vega-scenegraph to GitHub Packages 
 
 on:
   push:
@@ -25,8 +25,22 @@ jobs:
         with:
           node-version: 20.x
           registry-url: 'https://npm.pkg.github.com'
+      
+      - name: Determine Image Tag
+        id: set_image_tag
+        shell: bash
+        run: |
+          if [[ $GITHUB_EVENT_NAME == 'push' && $GITHUB_REF_TYPE == 'tag' ]]; then
+            IMAGE_TAG=${GITHUB_REF_NAME}
+          elif [[ $GITHUB_EVENT_NAME == 'pull_request' ]]; then
+            TAG="pull-${{ github.event.pull_request.number }}"
+            IMAGE_TAG=$TAG
+          else
+            IMAGE_TAG=${GITHUB_SHA}
+          fi
+          echo $IMAGE_TAG
+          echo "IMAGE_TAG=$IMAGE_TAG" >> $GITHUB_OUTPUT
 
-      # Skonfigurowanie .npmrc do publikacji na GitHub Packages
       - name: Configure .npmrc for GitHub Packages
         run: |
           echo "@senscience:registry=https://npm.pkg.github.com/" > ~/.npmrc
@@ -46,7 +60,7 @@ jobs:
       - name: Publish vega-scenegraph Package using npm
         run: |
           cd packages/vega-scenegraph
-          npm version 1.0.2 --no-git-tag-version
+          npm version ${{ steps.set_image_tag.outputs.image_tag}} --no-git-tag-version
           npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
